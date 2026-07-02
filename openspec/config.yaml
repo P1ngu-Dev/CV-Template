@@ -1,0 +1,64 @@
+# openspec/config.yaml
+schema: spec-driven
+
+context: |
+  Tech stack: Python + YAML (RenderCV v2.8), Typst typesetting
+  Main artifact: main/cv.yaml — CV data with moderncv theme, Spanish locale
+  Architecture: Flat YAML data + RenderCV CLI for PDF/PNG/HTML/MD output
+  Testing: No testable code — CV is a YAML data project. pytest available in venv but unused.
+  Skills: 21 project-specific CV/resume skills in .agents/skills/
+  Conventions: RenderCV YAML schema, main/cv.yaml as source of truth
+
+rules:
+  proposal:
+    - Scope every change to specific CV sections
+    - Include backward compat check for existing rendered outputs
+  specs:
+    - Use Given/When/Then for scenarios where behavior changes
+    - Use RFC 2119 keywords (MUST, SHALL, SHOULD, MAY)
+  design:
+    - Document theme and layout decisions with rationale
+    - Note downstream effects on rendered outputs
+  tasks:
+    - Group by phase, use hierarchical numbering
+    - Keep tasks completable in one session
+  apply:
+    - Follow existing cv.yaml structure and rendering conventions
+    - Validate YAML before rendering
+    tdd: false
+    test_command: ""
+  verify:
+    test_command: "rendercv render main/cv.yaml --dont-generate-pdf 2>&1"
+    build_command: "rendercv render main/cv.yaml 2>&1"
+    coverage_threshold: 0
+  archive:
+    - Warn before merging destructive deltas
+
+testing:
+  strict_tdd: false
+  rationale: "Project is a YAML-driven CV, not a codebase — no testable code exists. RenderCV validation serves as the correctness gate."
+  runner:
+    framework: pytest
+    command: "pytest"
+    available: false
+    note: "pytest is installed in the venv but no test files exist. Not applicable to this project type."
+  layers:
+    unit: false
+    integration: false
+    e2e: false
+  coverage:
+    available: false
+    command: ""
+  quality:
+    linter:
+      available: false
+      command: ""
+    type_checker:
+      available: false
+      command: ""
+    formatter:
+      available: false
+      command: ""
+  render_validation:
+    command: "rendercv render main/cv.yaml --dont-generate-pdf"
+    description: "Validates YAML structure and RenderCV schema compliance"

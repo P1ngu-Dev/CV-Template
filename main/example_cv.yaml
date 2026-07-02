@@ -1,0 +1,10 @@
+cv:
+  name: "John Doe"
+  email: "john.doe@example.com"
+  phone: "+1 234 567 890"
+  location: "New York, USA"
+  sections:
+    education:
+      - institution: "Example University"
+        degree: "B.S. in Computer Science"
+        date: "2020 - 2024"

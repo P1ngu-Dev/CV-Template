@@ -1,0 +1,10 @@
+# Local AI runtime state
+.atl/
+
+# Local Python/tooling environments
+.venv/
+venv/
+tools/browser-agent-eval/.venv/
+
+# Generated browser-tooling smoke-test outputs
+tools/browser-agent-eval/outputs/

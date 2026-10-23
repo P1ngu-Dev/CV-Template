@@ -74,6 +74,25 @@ falla. `outputs/` nunca se edita desde el servidor: se regenera.
 - **Gemini CLI**: `/mcp` y elige `reload`.
 - **Codex**: `/mcp` dentro de la TUI o `codex mcp list`.
 
+### Claude Code
+
+Tres pasos, una sola vez por máquina:
+
+1. **Instrucciones**: `CLAUDE.md` importa `AGENTS.md` con `@AGENTS.md`, así que
+   las reglas canónicas se cargan solas al abrir el proyecto.
+2. **MCP**: `.mcp.json` declara el servidor en scope de proyecto. Claude Code
+   pide aprobación por servidor la primera vez (diálogo de confianza y `/mcp`);
+   para reiniciar esa decisión: `claude mcp reset-project-choices`.
+   La ruta usa `${CLAUDE_PROJECT_DIR:-.}`, así que funciona aunque inicies
+   Claude desde un subdirectorio.
+3. **Skills**: `python3 scripts/cv.py sync-skills` crea `.claude/skills`
+   (symlinks; en Windows copia). Claude Code recarga en caliente; si no aparecen,
+   usa `/reload-skills`.
+
+Comprobación: `claude mcp list` debe mostrar `cv-workspace` como conectado y
+`/mcp` debe listar las 8 tools. En Windows cambia `python3` por `python` en
+`.mcp.json`.
+
 ## Prompts de ejemplo
 
 Crear una postulación completa:

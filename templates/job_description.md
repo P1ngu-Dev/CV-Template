@@ -1,3 +1,10 @@
-# Job Description
+# Job Description — {{COMPANY}} — {{ROLE}}
 
-Pegar aqui la oferta original o un resumen fiel.
+- Empresa: {{COMPANY}}
+- Rol: {{ROLE}}
+- Link: {{URL_OR_PENDING}}
+- Fecha de captura: {{DATE}}
+
+## Oferta
+
+{{JOB_TEXT}}

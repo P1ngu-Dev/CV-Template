@@ -1,0 +1,14 @@
+---
+description: Workspace CV-as-code con RenderCV y servidor MCP
+alwaysApply: true
+---
+
+Lee y sigue `AGENTS.md` en la raíz del repositorio. Puntos que no debes olvidar:
+
+- `main/cv.yaml` es la fuente de verdad; al adaptar una postulación edita
+  `applications/<carpeta>/cv.yaml`, nunca el maestro.
+- No inventes experiencia, fechas, títulos ni métricas.
+- Valida con `python scripts/cv.py check` antes de decir que terminaste.
+- Renderiza con `python scripts/cv.py render <carpeta>`; no edites `outputs/`.
+- Las skills están en `.agents/skills/`; el servidor MCP está declarado en
+  `.cursor/mcp.json`.

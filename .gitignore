@@ -1,10 +1,39 @@
-# Local AI runtime state
+# Estado local de herramientas de IA
 .atl/
 
-# Local Python/tooling environments
+# Entornos locales
 .venv/
 venv/
+env/
 tools/browser-agent-eval/.venv/
 
-# Generated browser-tooling smoke-test outputs
+# Python
+__pycache__/
+*.py[cod]
+.ruff_cache/
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+
+# Salidas generadas por RenderCV (pueden contener datos personales)
+main/outputs/
+applications/*/outputs/*
+!applications/*/outputs/.gitkeep
+rendercv_output/
+
+# Enlaces generados para agentes (`.agents/skills` es la fuente)
+.claude/skills/
+
+# Archivo temporal local
+tmp/*
+!tmp/.gitkeep
+
+# Salidas del smoke-test de navegador
 tools/browser-agent-eval/outputs/
+
+# Sistema operativo / editores
+.DS_Store
+Thumbs.db
+*.swp
+.idea/

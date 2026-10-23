@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "cv-workspace": {
+      "command": "python3",
+      "args": ["mcp/cv_workspace_server.py"],
+      "cwd": ".",
+      "timeout": 300000
+    }
+  }
+}

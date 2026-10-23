@@ -1,0 +1,7 @@
+# Configuración de proyecto para Codex CLI.
+# Codex solo la carga si el proyecto está marcado como confiable.
+[mcp_servers.cv-workspace]
+command = "python3"
+args = ["mcp/cv_workspace_server.py"]
+startup_timeout_sec = 20
+tool_timeout_sec = 300

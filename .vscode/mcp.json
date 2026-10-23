@@ -1,0 +1,9 @@
+{
+  "servers": {
+    "cv-workspace": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["${workspaceFolder}/mcp/cv_workspace_server.py"]
+    }
+  }
+}

@@ -1,10 +1,52 @@
+# Ejemplo de CV maestro para RenderCV 2.8.
+# Copia este archivo a main/cv.yaml (`python3 scripts/cv.py init`) y reemplaza
+# todos los datos por los tuyos. No borres las claves: RenderCV valida el esquema.
+
 cv:
   name: "John Doe"
-  email: "john.doe@example.com"
-  phone: "+1 234 567 890"
+  headline: "Software Engineering Student"
   location: "New York, USA"
+  email: "john.doe@example.com"
+  phone: "+1 202 555 0143"
+  website: "https://example.com"
+  social_networks:
+    - network: LinkedIn
+      username: johndoe
+    - network: GitHub
+      username: johndoe
   sections:
     education:
       - institution: "Example University"
-        degree: "B.S. in Computer Science"
-        date: "2020 - 2024"
+        area: "Computer Science"
+        degree: "B.S."
+        start_date: "2020-08"
+        end_date: "2024-05"
+        location: "New York, USA"
+        highlights:
+          - "GPA: 3.8/4.0"
+          - "Cursos relevantes: Estructuras de Datos, Bases de Datos, Sistemas Operativos"
+    experience:
+      - company: "Example Corp"
+        position: "Software Engineering Intern"
+        start_date: "2023-06"
+        end_date: "2023-08"
+        location: "Remote"
+        highlights:
+          - "Construí un dashboard interno con Python y SQL usado por más de 20 personas."
+          - "Automaticé reportes semanales y reduje el trabajo manual de 4 horas a 20 minutos."
+    projects:
+      - name: "CV Workspace"
+        date: "2024"
+        highlights:
+          - "Automaticé la generación de CVs con RenderCV, YAML y validación en CI."
+    skills:
+      - label: "Lenguajes"
+        details: "Python, TypeScript, SQL, Bash"
+      - label: "Herramientas"
+        details: "Git, Docker, Linux, PostgreSQL"
+
+design:
+  theme: moderncv
+
+locale:
+  language: spanish

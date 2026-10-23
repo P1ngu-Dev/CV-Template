@@ -1,3 +1,40 @@
+# CV de ejemplo válido para RenderCV 2.8 (tema classic, inglés).
+# Material histórico de referencia. Para tu CV real usa `scripts/cv.py init`.
+
 cv:
   name: "Jane Doe"
+  headline: "Software Engineering Student"
+  location: "New York, USA"
   email: "jane.doe@example.com"
+  phone: "+1 202 555 0143"
+  website: "https://example.com"
+  social_networks:
+    - network: GitHub
+      username: janedoe
+  sections:
+    education:
+      - institution: "Example University"
+        area: "Computer Science"
+        degree: "B.S."
+        start_date: "2020-08"
+        end_date: "2024-05"
+        location: "New York, USA"
+        highlights:
+          - "GPA: 3.9/4.0"
+    experience:
+      - company: "Example Corp"
+        position: "Software Engineering Intern"
+        start_date: "2023-06"
+        end_date: "2023-08"
+        location: "Remote"
+        highlights:
+          - "Built an internal dashboard with Python and SQL."
+    skills:
+      - label: "Languages"
+        details: "Python, TypeScript, SQL"
+
+design:
+  theme: classic
+
+locale:
+  language: english

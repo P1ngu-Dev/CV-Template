@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Alias compatible de `python3 scripts/cv.py render <carpeta>`.
 set -euo pipefail
 
 if [[ $# -ne 1 ]]; then
@@ -6,17 +7,5 @@ if [[ $# -ne 1 ]]; then
   exit 2
 fi
 
-APP_DIR="${1%/}"
-CV_FILE="$APP_DIR/cv.yaml"
-OUT_DIR="$APP_DIR/outputs"
-ABS_OUT_DIR="$(pwd)/$OUT_DIR"
-
-if [[ ! -f "$CV_FILE" ]]; then
-  echo "No existe $CV_FILE" >&2
-  exit 2
-fi
-
-mkdir -p "$ABS_OUT_DIR"
-rendercv render "$CV_FILE" --output-folder "$ABS_OUT_DIR"
-
-echo "Outputs generados en: $ABS_OUT_DIR"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+exec python3 "$ROOT/scripts/cv.py" render "${1%/}"

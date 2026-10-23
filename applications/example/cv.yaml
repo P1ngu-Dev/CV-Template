@@ -1,4 +1,54 @@
+# CV adaptado a Example Corp — Backend Engineering Intern.
+# Copia de main/example_cv.yaml con énfasis en Python, SQL y APIs.
+# Datos ficticios: no usar en una postulación real.
+
 cv:
-  name: "Jane Doe"
-  email: "jane.doe@example.com"
-  phone: "+1 234 567 890"
+  name: "John Doe"
+  headline: "Backend Engineering Intern"
+  location: "New York, USA"
+  email: "john.doe@example.com"
+  phone: "+1 202 555 0143"
+  website: "https://example.com"
+  social_networks:
+    - network: LinkedIn
+      username: johndoe
+    - network: GitHub
+      username: johndoe
+  sections:
+    education:
+      - institution: "Example University"
+        area: "Computer Science"
+        degree: "B.S."
+        start_date: "2020-08"
+        end_date: "2024-05"
+        location: "New York, USA"
+        highlights:
+          - "GPA: 3.8/4.0"
+          - "Cursos relevantes: Bases de Datos, Estructuras de Datos, Sistemas Operativos"
+    experience:
+      - company: "Example Corp"
+        position: "Software Engineering Intern"
+        start_date: "2023-06"
+        end_date: "2023-08"
+        location: "Remote"
+        highlights:
+          - "Construí un dashboard interno con Python, SQL y una API REST usada por más de 20 personas."
+          - "Automaticé reportes semanales y reduje el trabajo manual de 4 horas a 20 minutos."
+    projects:
+      - name: "CV Workspace"
+        date: "2024"
+        highlights:
+          - "Automaticé la generación de CVs con RenderCV, YAML y validación en CI."
+    skills:
+      - label: "Lenguajes"
+        details: "Python, SQL, TypeScript, Bash"
+      - label: "Backend"
+        details: "APIs REST, PostgreSQL, Linux"
+      - label: "Herramientas"
+        details: "Git, Docker, RenderCV, GitHub Actions"
+
+design:
+  theme: moderncv
+
+locale:
+  language: spanish

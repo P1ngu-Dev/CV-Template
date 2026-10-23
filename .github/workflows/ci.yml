@@ -50,6 +50,12 @@ jobs:
       - name: Verificar enlaces de skills
         run: python scripts/cv.py sync-skills --check
 
+      - name: Bootstrap idempotente (contrato JSON)
+        shell: bash
+        run: |
+          python scripts/cv.py bootstrap --no-install --no-check --json > bootstrap.json
+          python -c "import json; d=json.load(open('bootstrap.json')); assert d['ok'], d['next_actions']; assert any(s['step'] == 'rendercv' and s['ok'] for s in d['steps'])"
+
       - name: Compilar Python
         run: python -m compileall -q scripts mcp
 

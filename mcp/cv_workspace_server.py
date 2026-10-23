@@ -40,6 +40,9 @@ Reglas:
 
 Flujo típico: cv_status -> cv_new_application -> editar analysis.md y cv.yaml ->
 cv_render -> cv_check -> cv_set_status.
+
+Si cv_status indica que falta RenderCV o el CV maestro, pide al usuario ejecutar
+`python3 scripts/cv.py bootstrap` (o `--name "Nombre"` para crear main/cv.yaml).
 """
 
 TOOLS: list[dict[str, Any]] = [

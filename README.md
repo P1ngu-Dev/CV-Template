@@ -31,6 +31,12 @@ python3 scripts/cv.py init --name "Tu Nombre"     # crea main/cv.yaml
 python3 scripts/cv.py check                       # valida que todo renderice
 ```
 
+O todo en un solo paso idempotente (útil si lo ejecuta un agente):
+
+```bash
+python3 scripts/cv.py bootstrap --name "Tu Nombre"
+```
+
 En Windows usa `python` en lugar de `python3`. Si usas `uv` o `pipx` y prefieres
 no crear `.venv`:
 
@@ -48,6 +54,8 @@ El CLI detecta RenderCV en `.venv`, en el `PATH` o en la variable `RENDERCV`.
   [`CONTRIBUTING.md`](CONTRIBUTING.md). No agregues CVs reales.
 - **Para probar sin datos reales:** `applications/example/` ya trae una
   postulación completa de demostración.
+- **Para que lo instale un agente:** copia el prompt de
+  [`docs/agent-setup.md`](docs/agent-setup.md).
 
 ## Estructura
 
@@ -102,6 +110,7 @@ El detalle completo está en [`docs/application_workflow.md`](docs/application_w
 
 | Comando | Qué hace |
 | --- | --- |
+| `cv.py bootstrap [--name "..."]` | Instala y configura todo (idempotente, con `--json`) |
 | `cv.py setup` | Crea `.venv`, instala RenderCV y enlaza skills |
 | `cv.py init --name "..."` | Crea `main/cv.yaml` desde el ejemplo |
 | `cv.py new "Empresa" "Rol"` | Crea carpeta de postulación + archivos |
@@ -113,14 +122,18 @@ El detalle completo está en [`docs/application_workflow.md`](docs/application_w
 | `cv.py set-status <carpeta> <estado>` | Actualiza seguimiento |
 | `cv.py sync-skills` | Enlaza `.agents/skills` a `.claude/skills` |
 
-Con `make`: `make setup`, `make init NAME="..."`, `make new COMPANY="..." ROLE="..."`,
-`make render APP=...`, `make check`, `make list`, `make doctor`.
+Con `make`: `make bootstrap NAME="..."`, `make setup`, `make init NAME="..."`,
+`make new COMPANY="..." ROLE="..."`, `make render APP=...`, `make check`,
+`make list`, `make doctor`.
 
 ## Agentes de IA
 
 El repo trae instrucciones y herramientas para que un agente trabaje sin
 adivinar comandos:
 
+- **Instalación asistida**: [`docs/agent-setup.md`](docs/agent-setup.md) incluye
+  un prompt listo para que tu agente instale y configure el repo; el comando es
+  `python3 scripts/cv.py bootstrap --json`.
 - **`AGENTS.md`**: reglas canónicas (no inventar experiencia, no tocar el maestro
   al adaptar, validar antes de cerrar).
 - **Puentes de compatibilidad**: `CLAUDE.md`, `GEMINI.md`,

@@ -1,7 +1,8 @@
 # Contribuir
 
 Este repo es una plantilla de CV-as-code. Las contribuciones deben mantener la
-portabilidad: cualquiera debe poder clonar, ejecutar dos comandos y renderizar.
+portabilidad: cualquiera debe poder clonar, ejecutar `cv.py bootstrap` y
+renderizar.
 
 ## Antes de abrir un PR
 
@@ -9,6 +10,7 @@ portabilidad: cualquiera debe poder clonar, ejecutar dos comandos y renderizar.
 # Dependencias de desarrollo (ruff)
 .venv/bin/pip install -e ".[dev]"
 
+python3 scripts/cv.py bootstrap --no-install   # camino real de un agente
 python3 scripts/cv.py doctor
 python3 scripts/cv.py check
 python3 scripts/cv.py sync-skills --check

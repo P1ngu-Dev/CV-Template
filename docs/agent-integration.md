@@ -15,6 +15,10 @@ ejecutar el flujo completo.
 `AGENTS.md` es la fuente única. Los demás archivos solo apuntan a él o agregan
 detalles del cliente.
 
+Para dejar el entorno listo (instalación, skills y validación) sigue
+[`agent-setup.md`](agent-setup.md), que incluye un prompt listo para el usuario y
+el contrato JSON de `python3 scripts/cv.py bootstrap --json`.
+
 ## Compatibilidad por cliente
 
 | Cliente | Instrucciones | MCP | Skills |

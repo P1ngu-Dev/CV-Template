@@ -2,6 +2,7 @@
 """CLI único del workspace CV.
 
 Ejemplos:
+  python3 scripts/cv.py bootstrap --name "Jane Doe"
   python3 scripts/cv.py setup
   python3 scripts/cv.py init --name "Jane Doe"
   python3 scripts/cv.py new "Banco BICE" "Práctica Informática" --url https://...
@@ -28,7 +29,8 @@ import cvlib as cv  # noqa: E402, I001
 # --------------------------------------------------------------------------
 
 
-def cmd_setup(args: argparse.Namespace) -> int:
+def _install_environment() -> None:
+    """Crea `.venv` e instala RenderCV. Idempotente: reutiliza el entorno existente."""
     if sys.version_info < cv.MIN_PYTHON:
         raise cv.CvError(
             f"Se requiere Python {cv.MIN_PYTHON[0]}.{cv.MIN_PYTHON[1]}+ "
@@ -64,6 +66,10 @@ def cmd_setup(args: argparse.Namespace) -> int:
 
     print(f"OK RenderCV {cv.rendercv_version()} instalado en .venv")
 
+
+def cmd_setup(args: argparse.Namespace) -> int:
+    _install_environment()
+
     if not args.no_skills:
         try:
             report = cv.sync_skills(force=True)
@@ -78,6 +84,151 @@ def cmd_setup(args: argparse.Namespace) -> int:
     else:
         print("  python3 scripts/cv.py check")
     return 0
+
+
+def _bootstrap_report(
+    args: argparse.Namespace,
+    steps: list[dict[str, object]],
+    checks: list[dict[str, object]],
+    results: list[cv.CheckResult] | None,
+    next_actions: list[str],
+) -> int:
+    required_ok = all(step["ok"] for step in steps if step["required"])
+    doctor_ok = all(check["ok"] for check in checks if check["required"])
+    check_ok = results is None or all(result.ok for result in results)
+    ok = required_ok and doctor_ok and check_ok
+
+    payload = {
+        "ok": ok,
+        "steps": steps,
+        "doctor": checks,
+        "check": None if results is None else [result.as_dict() for result in results],
+        "next_actions": next_actions,
+    }
+
+    if args.json:
+        print(json.dumps(payload, ensure_ascii=False, indent=2))
+        return 0 if ok else 1
+
+    for step in steps:
+        mark = "OK   " if step["ok"] else ("FALLA" if step["required"] else "PENDIENTE")
+        print(f"{mark} {step['step']}: {step['detail']}")
+
+    if steps and not doctor_ok:
+        print("\nDiagnóstico:")
+        for check in checks:
+            if check["ok"]:
+                continue
+            mark = "FALLA" if check["required"] else "AVISO"
+            print(f"  {mark} {check['name']}: {check['detail']}")
+
+    if results is not None:
+        print("\nValidación:")
+        for result in results:
+            print(f"  {'OK  ' if result.ok else 'FALLA'} {result.target}")
+
+    if next_actions:
+        print("\nSiguiente:")
+        for action in next_actions:
+            print(f"  - {action}")
+
+    print("\nEntorno listo." if ok else "\nQuedan pasos pendientes.")
+    return 0 if ok else 1
+
+
+def cmd_bootstrap(args: argparse.Namespace) -> int:
+    """Deja el workspace listo de una sola vez y reporta qué falta.
+
+    Pensado para agentes: es idempotente y con `--json` devuelve un contrato
+    estable (`ok`, `steps`, `doctor`, `check`, `next_actions`).
+    """
+    steps: list[dict[str, object]] = []
+    next_actions: list[str] = []
+
+    def add_step(name: str, ok: bool, detail: str, *, required: bool = True) -> None:
+        steps.append({"step": name, "ok": bool(ok), "detail": detail, "required": required})
+
+    python_ok = sys.version_info >= cv.MIN_PYTHON
+    add_step("python", python_ok, f"Python {sys.version.split()[0]}")
+    if not python_ok:
+        next_actions.append(
+            f"Instala Python {cv.MIN_PYTHON[0]}.{cv.MIN_PYTHON[1]}+ y vuelve a ejecutar "
+            "el bootstrap."
+        )
+        return _bootstrap_report(args, steps, [], None, next_actions)
+
+    try:
+        cv.rendercv_command()
+        rendercv_available = True
+    except cv.CvError:
+        rendercv_available = False
+
+    if rendercv_available:
+        add_step("rendercv", True, cv.rendercv_version())
+    elif args.no_install:
+        add_step("rendercv", False, "no instalado (--no-install)")
+        next_actions.append("python3 scripts/cv.py setup")
+    else:
+        try:
+            _install_environment()
+            add_step("rendercv", True, cv.rendercv_version())
+        except (cv.CvError, subprocess.TimeoutExpired) as exc:
+            detail = str(exc).splitlines()[0] if str(exc) else type(exc).__name__
+            add_step("rendercv", False, detail)
+            next_actions.append(
+                "Revisa el error de instalación y ejecuta `python3 scripts/cv.py setup`."
+            )
+
+    try:
+        report = cv.sync_skills()
+        missing = sum(len(info["missing"]) for info in report["targets"].values())
+        add_step("skills", report["ok"], f"{report['skills']} skills, {missing} enlaces pendientes")
+        if not report["ok"]:
+            next_actions.append("python3 scripts/cv.py sync-skills --force")
+    except cv.CvError as exc:
+        add_step("skills", False, str(exc).splitlines()[0])
+        next_actions.append("npx skills experimental_install")
+
+    if cv.MASTER_CV.exists():
+        add_step("master", True, cv.relative(cv.MASTER_CV), required=False)
+    elif args.name:
+        try:
+            cv.init_master(name=args.name)
+            add_step("master", True, f"{cv.relative(cv.MASTER_CV)} creado a partir del ejemplo")
+            next_actions.append(
+                f"Edita {cv.relative(cv.MASTER_CV)} con los datos reales del usuario."
+            )
+        except cv.CvError as exc:
+            add_step("master", False, str(exc).splitlines()[0])
+    else:
+        add_step(
+            "master",
+            False,
+            "falta main/cv.yaml (pasa --name para crearlo)",
+            required=False,
+        )
+        next_actions.append('python3 scripts/cv.py init --name "Nombre Apellido"')
+
+    checks = cv.doctor()
+    if not checks:
+        next_actions.append("python3 scripts/cv.py doctor")
+
+    results: list[cv.CheckResult] | None = None
+    rendercv_ok = any(step["step"] == "rendercv" and step["ok"] for step in steps)
+    if not args.no_check and rendercv_ok:
+        try:
+            results = cv.check_all(pdf=args.pdf)
+        except cv.CvError as exc:
+            add_step("check", False, str(exc).splitlines()[0])
+            next_actions.append("Revisa los cv.yaml y ejecuta `python3 scripts/cv.py check`.")
+
+    if not next_actions:
+        next_actions.append(
+            'Crea una postulación: python3 scripts/cv.py new "Empresa" "Rol" --url "..."'
+        )
+        next_actions.append("Conecta el servidor MCP del cliente y verifica con `cv_status`.")
+
+    return _bootstrap_report(args, steps, checks, results, next_actions)
 
 
 def cmd_init(args: argparse.Namespace) -> int:
@@ -284,6 +435,19 @@ def build_parser() -> argparse.ArgumentParser:
     setup = subparsers.add_parser("setup", help="Crea .venv e instala dependencias")
     setup.add_argument("--no-skills", action="store_true", help="No enlazar skills de agentes")
     setup.set_defaults(func=cmd_setup)
+
+    bootstrap = subparsers.add_parser(
+        "bootstrap",
+        help="Deja el workspace listo de una vez (idempotente, ideal para agentes)",
+    )
+    bootstrap.add_argument("--name", help="Crea main/cv.yaml con este nombre si falta")
+    bootstrap.add_argument("--no-install", action="store_true", help="No instalar RenderCV")
+    bootstrap.add_argument("--no-check", action="store_true", help="No validar los cv.yaml")
+    bootstrap.add_argument("--pdf", action="store_true", help="Compila el PDF al validar")
+    bootstrap.add_argument(
+        "--json", action="store_true", help="Salida JSON (contrato para agentes)"
+    )
+    bootstrap.set_defaults(func=cmd_bootstrap)
 
     init = subparsers.add_parser("init", help="Crea main/cv.yaml desde el ejemplo")
     init.add_argument("--name", help="Reemplaza el nombre del CV de ejemplo")

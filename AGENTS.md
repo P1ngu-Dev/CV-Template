@@ -56,6 +56,7 @@ Usa `python3` en macOS/Linux y `python` en Windows. Nunca ejecutes `rendercv`
 directamente: el CLI resuelve el ejecutable correcto (`.venv` o PATH).
 
 ```bash
+python3 scripts/cv.py bootstrap --name "Nombre Apellido"  # deja todo listo (idempotente)
 python3 scripts/cv.py setup          # crea .venv, instala RenderCV y enlaza skills
 python3 scripts/cv.py init --name "Nombre Apellido"
 python3 scripts/cv.py new "Empresa" "Rol" --url "https://..." [--job-file oferta.md]
@@ -75,6 +76,24 @@ Equivalentes con `make`: `make setup`, `make init NAME="..."`,
 
 Si `rendercv` no está disponible, no lo instales globalmente por tu cuenta:
 indica al usuario que ejecute `python3 scripts/cv.py setup`.
+
+## Bootstrap (primera vez)
+
+Cuando el entorno no está listo (falta `.venv`, RenderCV, `.claude/skills` o
+`main/cv.yaml`), no improvises una instalación: usa el comando idempotente y lee
+su JSON.
+
+```bash
+python3 scripts/cv.py bootstrap --json                  # diagnostica e instala
+python3 scripts/cv.py bootstrap --name "Nombre" --json  # además crea main/cv.yaml
+```
+
+- Pide el nombre al usuario antes de crearlo; no lo inventes.
+- `bootstrap` nunca sobrescribe `main/cv.yaml`; `--force` solo si el usuario lo pide.
+- Interpreta `ok`, `steps[].detail` y `next_actions`. Si `ok` es false, muestra el
+  error exacto y no desactives la validación.
+- Después conecta o recarga el MCP del cliente y confirma con `cv_status`.
+- Guía completa y prompt para el usuario: `docs/agent-setup.md`.
 
 ## Flujo de una postulación
 
